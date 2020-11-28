@@ -71,3 +71,71 @@ mean(glm.pred1==Direction.2005)
 #predicting on a particular dataset
 predict(glm.fit1, newdata=data.frame(Lag1=c(1.2, 1.5), Lag2=c(1.1, -0.8)),
         type="response")
+
+
+
+#----------------------------------------------------
+#Linear Discriminant Analysis (LDA)
+lda.fit= lda(Direction~Lag1 + Lag2, data=Smarket, subset=train)
+lda.fit
+plot(lda.fit)
+
+lda.pred = predict(lda.fit, Smarket.2005)
+names(lda.pred)
+#output: class, posterior, x
+lda.class = lda.pred$class
+table(lda.class, Direction.2005)
+mean(lda.class==Direction.2005)
+
+table(lda.class)
+
+##  go over the posterior probability part again
+
+
+#--------------------------------------------------------------
+#Quadratic Discriminant Analysis (QDA)
+qda.fit = qda(Direction ~ Lag1 + Lag2, data=Smarket, subset=train)
+qda.fit
+
+qda.class = predict(qda.fit, Smarket.2005)$class
+table(qda.class, Direction.2005)
+mean(qda.class==Direction.2005)
+
+
+#---------------------------------------------------------------
+#k-nearest neighbors
+library(class)
+train.X = cbind(Lag1, Lag2)[train,]
+test.X = cbind(Lag1, Lag2)[!train,]
+train.Direction = Direction[train]
+
+set.seed(1)
+# I don't fully understand the reasoning behind the above statement, revisit this
+knn.pred= knn(train.X, test.X, train.Direction,k=1)
+table(knn.pred, Direction.2005)
+(43+83)/252 #0.5
+
+#trying the above with k=3
+knn.pred= knn(train.X, test.X, train.Direction,k=3)
+table(knn.pred, Direction.2005)
+(48+85)/252 #0.53, that's the max it can reach with this approach
+
+#So, QDA gives the best results with 60% accuracy
+
+
+
+#------------ Caravan Insurance Data -----------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
