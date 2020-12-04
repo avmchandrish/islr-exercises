@@ -125,17 +125,54 @@ table(knn.pred, Direction.2005)
 
 
 #------------ Caravan Insurance Data -----------------------
+dim(Caravan)
+attach(Caravan)
+summary(Purchase)
+348/5822
 
+# for KNN classifiers the scale of the variables matters a lot, 
+# because the distance between observations would be affected
+# scale function helps in standardizing the data
+standardized.X = scale(Caravan[,-86])
+var(Caravan[,1])
+var(Caravan[,2])
 
+var(standardized.X[,1])
+var(standardized.X[,1])
 
+test = 1:1000
+train.X = standardized.X[-test,]
+test.X = standardized.X[test,]
+train.Y = Purchase[-test]
+test.Y = Purchase[test]
+set.seed(1)
+knn.pred = knn(train.X, test.X, train.Y, k=1)
 
+mean(test.Y!=knn.pred)
+mean(test.Y!="No")
 
+table(knn.pred, test.Y)
+9/(68+9)
 
+#trying out with k=3
+knn.pred = knn(train.X, test.X, train.Y, k=3)
+table(knn.pred, test.Y)
+5/26
 
+#trying with k=5
+knn.pred = knn(train.X, test.X, train.Y, k=5)
+table(knn.pred, test.Y)
+4/(11+4)
 
+## let's try a logistic regression on this data with cut off at 0.25
+glm.fit = glm(Purchase~., data= Caravan, family=binomial, subset=-test)
+glm.probs = predict(glm.fit, Caravan[test,], type="response")
+glm.pred = rep("No", 1000)
+glm.pred[glm.probs>0.5] = "Yes"
+table(glm.pred, test.Y)
 
-
-
-
-
-
+#this gives very less number of positive results, let's try and decrease the threshold
+glm.pred = rep("No", 1000)
+glm.pred[glm.probs>.25]="Yes"
+table(glm.pred, test.Y)
+11/(22+11)
