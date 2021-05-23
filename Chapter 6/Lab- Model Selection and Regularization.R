@@ -141,6 +141,62 @@ coef(reg.best, 10)
 
 
 
+#----------------------------------------------
+#-------------Lab2:Ridge Regression and The Lasso 
+
+x = model.matrix(Salary~., Hitters)[,-1]
+y = Hitters$Salary
+
+#model.matrix function, produces matrix corresponding to the 19 predictors and
+#automatically transforms any qualitative variables into dummy variables
+
+
+#----- Ridge Regression
+library(glmnet)
+grid = 10^seq(10, -2, length=100)
+ridge.mod = glmnet(x, y, alpha=0, lambda=grid)
+
+dim(coef(ridge.mod))
+
+ridge.mod$lambda[50]
+coef(ridge.mod)[,50]
+#l2 norm
+sqrt(sum(coef(ridge.mod)[-1,50]^2))
+
+
+ridge.mod$lambda[60]
+coef(ridge.mod)[,60]
+#l2 norm
+sqrt(sum(coef(ridge.mod)[-1,60]^2))
+
+
+#we can use the predict function to obtain ridge regression for a given value of lambda
+predict(ridge.mod, s=50, type="coefficients")[1:20,]
+
+#splitting
+
+#continue the ridge regression when you get time
+
+
+
+######## THE LASSO
+lasso.mod = glmnet(x[train,], y[train], alpha = 1, lambda = grid)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
